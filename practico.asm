@@ -1,12 +1,19 @@
 .data
-        mensaje: .ascii "ingresar 4 caracteres:\n"
+        mensaje: .ascii "La palabra a adivinar tiene 4 caracteres:\n"
 	reintentar: .ascii "Quieres volver a jugar? y/n:" 
         respuestaUser: .ascii ""
 	cadena: .space 10
 	misIntentos: .int 0
 	verificarVerdes: .int 0
-	puntaje: .ascii "0"
-	ganador: .ascii "Adivinaste la palabra\n"
+	ganador: .ascii "!felicidades, has ganado!\n"
+	pedirNombre: .ascii "Ingresa tu nombre:"
+	tuPuntaje: .ascii "Tu puntaje fue:"
+	jugador1: .ascii "marisol"
+	ranking1: .space 4
+	jugador2: .ascii "joel"
+	ranking2: .int 0
+	jugador3: .ascii "ezequiel"
+	ranking3: .int 0
         miPalabra:  .ascii "hola\n"
 	color_reset: .asciz "\033[37m"
 	color_rojo: .asciz "\033[31m"
@@ -33,7 +40,7 @@ ingresarPalabra:
 
         mov r7, #4 //salida por pantalla
         mov r0, #1 //salida de cadena
-        mov r2, #23 //tamaño de la  cadena
+        mov r2, #42 //tamaño de la  cadena
         ldr r1, =mensaje
         swi 0 //invoca la subrutina de SO
 
@@ -135,7 +142,7 @@ imprimir_caracter:
 	ldr r1,=color_reset //reseteo los colores
         bl cambiar_color
         cmp r6,#5
-        beq salto
+        beq intentos
         add r6,#1
 
 	pop {lr}
@@ -154,13 +161,109 @@ ganaste:
 
         mov r7, #4 //salida por pantalla
         mov r0, #1 //salida de cadena
-        mov r2, #23 //tamaño de la  cadena
+        mov r2, #26 //tamaño de la  cadena
         ldr r1, =ganador
         swi 0 //invoca la subrutina de SO
+	b calcular_rankings
+
+calcular_rankings:
+		//mover los puntos del primero al segundo y segundo al tercero, se libera el primer lugar
+                ldr  r1,=ranking3
+                ldr  r2,=ranking2
+                ldr  r3,[r2]
+                str  r3,[r1]
+                ldr  r1,=ranking1
+                ldr  r3,[r1]
+                str  r3,[r2]
+		//mover los nombres de los jugadores un lugar
+		ldr r1,=jugador3
+		ldr r2,=jugador2
+		ldr r3,[r2]
+		str r3,[r1]
+		ldr r1,=jugador1
+		ldr r3,[r1]
+		str r3,[r2]
+		b puntos
+
+puntos:
+        ldr r1, =misIntentos
+        ldr r2,[r1] //guardo la cantidad de intentos que voy
+        mov r3,#5  //5 es el maximo intento
+        sub r3,r2 //a 5 le resto el numero de intento qye voy
+        mov r1,#4
+	mul r3,r1 //4 es el length de la palabra, lo multplico los intentos que me quedan
+	ldr r1,=ranking1
+        str r3,[r1] //envio el puntaje a ranking
+	ldr r1,=ranking1
+	ldr r2,[r1]
+
+	mov r7, #4 //salida por pantalla
+        mov r0, #1 //salida de cadena
+        mov r2, #15 //tamaño de la  cadena
+        ldr r1, =tuPuntaje
+        swi 0 //invoca la subrutina de SO
+
+	mov r7, #4 //salida por pantalla
+        mov r0, #1 //salida de cadena
+        mov r2, #3 //tamaño de la  cadena
+        ldr r1, =ranking1
+        swi 0 //invoca la subrutina de SO
+
+        ldr r1,=salto_linea
+        mov r2,#1
+        bl imprimir
+        b ingresarNombre
 
 
-        mov r7, #1  //salida al sistema
-        swi 0
+ingresarNombre:
+	 mov r7, #4 //salida por pantalla
+         mov r0, #1 //salida de cadena
+         mov r2, #18 //tamaño de la  cadena
+         ldr r1, =pedirNombre
+         swi 0 //invoca la subrutina de SO
+
+         mov r7, #3   //lectura de teclado
+         mov r0, #0   //ingresa cadena
+         mov r2, #9   //leer * caracteres
+         ldr r1, =jugador1 //donde se guarda la cadena ingresada
+         swi 0
+
+         ldr r1,=salto_linea
+         mov r2,#1
+         bl imprimir
+  	 b mostrarRankings
+mostrarRankings:
+         mov r7, #4 //salida por pantalla
+         mov r0, #1 //salida de cadena
+         mov r2, #7 //tamaño de la  cadena
+         ldr r1, =jugador1
+         swi 0 //invoca la subrutina de SO
+	 
+	 ldr r1,=salto_linea
+         mov r2,#1
+         bl imprimir
+	
+	 mov r7, #4 //salida por pantalla
+         mov r0, #1 //salida de cadena
+         mov r2, #4 //tamaño de la  cadena
+         ldr r1, =jugador2
+         swi 0 //invoca la subrutina de SO
+
+         ldr r1,=salto_linea
+         mov r2,#1
+         bl imprimir
+	
+	 mov r7, #4 //salida por pantalla
+         mov r0, #1 //salida de cadena
+         mov r2, #8 //tamaño de la  cadena
+         ldr r1, =jugador3
+         swi 0 //invoca la subrutina de SO
+
+         ldr r1,=salto_linea
+         mov r2,#1
+         bl imprimir
+	
+       b fin
 
 volverIntentar:
 

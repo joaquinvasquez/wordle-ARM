@@ -1,0 +1,4 @@
+ram
+risc
+neumann 
+teclado
