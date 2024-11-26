@@ -23,7 +23,7 @@ main:
 
 cuenta_caracteres:
 	cmp r0, r1
-	blt fin_cuenta_caracteres
+	blt fin_cuenta_caracteres// si es menor a diez deja de comparar
 ciclo_cuenta:
 	add r2, #1
 	sub r0, r0, r1

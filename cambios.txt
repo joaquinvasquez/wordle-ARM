@@ -1,0 +1,20 @@
+- cambios de nombres de variables:
+	mensaje --> msj_inicio
+	reintentar --> msj_reiniciar
+	respuestaUser --> rta_reiniciar
+falta:	misIntentos --> intentos
+	verificarVerdes --> cant_verdes
+	ganador --> msj_ganador
+	perdiste --> msj_perdedor
+	pedirNombre --> msj_pedir_nombre
+	tuPuntaje --> msj_puntaje
+	jugador1 --> nombre_jugador
+	ranking1 --> puntaje_jugador
+	miPalabra --> palabra_seleccionada
+	color_azul --> null
+	jugador2 --> null
+	ranking2 --> null
+	jugador3 --> null
+	ranking3 --> null
+	
+	

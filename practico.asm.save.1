@@ -1,7 +1,6 @@
-.data   //lista de palabras
+.data
 	archivo_palabras: .asciz "palabras.txt"
 	caracter_leido: .space 199
-	//msj inicial
         msj_inicio: .ascii "- La palabra a adivinar tiene "
         cod_caracteres: .space 2
 	msj_final: .ascii " caracteres -\n"
@@ -10,31 +9,25 @@
 	msj_ingresar: .ascii "Ingrese una palabra: "
 	msj_reiniciar: .ascii "Quieres volver a jugar? y/n:" 
         rta_reiniciar: .ascii ""
-	//palabra ingresada por usuario
 	cadena: .space 14
 	misIntentos: .int 0
 	cant_verdes: .int 0
 	msj_ganador: .ascii "!felicidades, has ganado!\n"
 	msj_pedir_nombre: .ascii "Ingresa tu nombre: "
 
-        //palabra a adivinar
+
         palabra_seleccionada:  .space 10, 0x00 // 10 bytes con valor nulo para luego escribir la palabra
 	longitud_palabra: .int 0
-
-        //codigo de colores
 	color_reset: .asciz "\033[37m"
 	color_rojo: .asciz "\033[31m"
 	color_verde: .asciz "\033[32m"
 	color_amarillo: .asciz "\033[33m"
-
         salto_linea: .asciz "\n"
- 	msj_perdedor: .ascii "Perdiste\n" 
+ 	msj_perdedor: .ascii "Perdiste\n"
 
-         //archivo de rankings
-	archivo_rankings: .asciz "rankings.txt"
-	rankings_leidos: .space 42
+         
 
-        //PUNTAJES
+         //PUNTAJES
 
 	 msj_puntaje: .ascii "Tu puntaje fue: "
 	 puntaje_jugador: .space 4
@@ -42,7 +35,7 @@
 	 puntaje_jugador3: .space 4
 
         //DECO nombres y PUNTAJE
-         msj_rankings:.ascii "rankings:\n"
+
          nombre_jugador: .space 10
 	 cod_puntaje: .space 3,0
 	 puntos0: .ascii " puntos"
@@ -447,13 +440,13 @@ puntos:
 
 	mov r7, #4 //salida por pantalla
         mov r0, #1 //salida de cadena
-        mov r2, #16 //tamaño de la  cadena
+        mov r2, #20 //tamaño de la  cadena
         ldr r1, =msj_puntaje
         swi 0 //invoca la subrutina de SO
 
 	mov r7, #4 //salida por pantalla
         mov r0, #1 //salida de cadena
-        mov r2, #2 //tamaño de la  cadena
+        mov r2, #3 //tamaño de la  cadena
         ldr r1, =cod_puntaje
         swi 0 //invoca la subrutina de SO
 
@@ -466,7 +459,7 @@ puntos:
 ingresarNombre:
 	 mov r7, #4 //salida por pantalla
          mov r0, #1 //salida de cadena
-         mov r2, #19 //tamaño de la  cadena
+         mov r2, #18 //tamaño de la  cadena
          ldr r1, =msj_pedir_nombre
          swi 0 //invoca la subrutina de SO
 
@@ -479,44 +472,14 @@ ingresarNombre:
          ldr r1,=salto_linea
          mov r2,#1
          bl imprimir
-  	 b traer_rankings
-
-traer_rankings:
-	mov r7, #5 // Abrir archivo
-        ldr r0, =archivo_rankings // puntero al nombre del archivo
- // en r0 devuelve el descriptor
-        mov r1, #2 // 0: Lectura, 1: Escritura 2: lectura/escritura
-        mov r2, #0 // Permisos (0666 en octal rw para todos, son 
-// permisos de linux), se pone 0 en caso de lectura.
-        swi 0 // SysCall
- // —-- Vemos cómo resultó. ¿Se pudo abrir?----------------
-        cmp r0, #0 // ¿pudimos abrir el archivo?
-        blt error // si es menor, negativo, hubo error
-        mov r6, r0
-	mov r7, #3 // lectura del archivo, porque r0 contiene el descriptor.
-        ldr r1, =rankings_leidos // donde poner el contenido del archivo leído.
-        mov r2, #42 // cantidad de caracteres a leer.
-        swi 0
-	mov r0, r6 // ponemos en r0 descriptor
-        mov r7, #6 // Cerramos archivo abierto
-        swi 0
-	b mostrarRankings
-
-
-
+  	 b mostrarRankings
 mostrarRankings:
 
-         mov r7, #4 //salida por pantalla
-         mov r0, #1 //salida de cadena
-         mov r2, #10 //tamaño de la  cadena
-         ldr r1, =msj_rankings
-         swi 0 //invoca la subrutina de SO
-
 
          mov r7, #4 //salida por pantalla
          mov r0, #1 //salida de cadena
-         mov r2, #42 //tamaño de la  cadena
-         ldr r1, =rankings_leidos
+         mov r2, #21 //tamaño de la  cadena
+         ldr r1, =nombre_jugador
          swi 0 //invoca la subrutina de SO
 
 	 ldr r1,=salto_linea
